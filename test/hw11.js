@@ -13,9 +13,9 @@ describe("compound", function(){
 
         //deploy underlying token contracts
         const erc20factory = await ethers.getContractFactory("SampleErc20");
-        sampleErc20 = await erc20factory.deploy(ethers.utils.parseUnits("1000000", 18));
+        sampleErc20 = await erc20factory.deploy(ethers.utils.parseUnits("1000000", 18),"APPW","AW");
         await sampleErc20.deployed();
-
+        console.log("line18",sampleErc20.address)
         // deploy comptroller
         const comptrollerFactory = await ethers.getContractFactory("Comptroller");
         
@@ -30,7 +30,7 @@ describe("compound", function(){
         const simplePriceOracle = await priceOracleFactory.deploy();
         await simplePriceOracle.deployed();
 
-        // setup SimplePriceOracle to Comptroller
+        // setup New price from SimplePriceOracle to Comptroller
         comptroller._setPriceOracle(simplePriceOracle.address);
 
         // deploy interest rate model
@@ -63,7 +63,7 @@ describe("compound", function(){
          comptroller._supportMarket(cErc20.address);
 
     })
-
+    
     describe("CERC20", async () => {
     it ("TEST Mint", async function(){ 
         // test mint
@@ -97,6 +97,6 @@ describe("compound", function(){
     
     
     })
-
+    
 })
  
