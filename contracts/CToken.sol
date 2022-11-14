@@ -7,6 +7,7 @@ import "./ErrorReporter.sol";
 import "./EIP20Interface.sol";
 import "./InterestRateModel.sol";
 import "./ExponentialNoError.sol";
+import "hardhat/console.sol";
 
 /**
  * @title Compound's CToken Contract
@@ -565,6 +566,7 @@ abstract contract CToken is CTokenInterface, ExponentialNoError, TokenErrorRepor
     function borrowFresh(address payable borrower, uint borrowAmount) internal {
         /* Fail if borrow not allowed */
         uint allowed = comptroller.borrowAllowed(address(this), borrower, borrowAmount);
+        console.log("allowed",allowed);
         if (allowed != 0) {
             revert BorrowComptrollerRejection(allowed);
         }

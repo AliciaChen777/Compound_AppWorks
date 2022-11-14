@@ -8,6 +8,7 @@ import "./ComptrollerInterface.sol";
 import "./ComptrollerStorage.sol";
 import "./Unitroller.sol";
 import "./Governance/Comp.sol";
+import "hardhat/console.sol";
 
 /**
  * @title Compound's Comptroller Contract
@@ -338,19 +339,22 @@ contract Comptroller is ComptrollerV7Storage, ComptrollerInterface, ComptrollerE
      * @return 0 if the borrow is allowed, otherwise a semi-opaque error code (See ErrorReporter.sol)
      */
     function borrowAllowed(address cToken, address borrower, uint borrowAmount) override external returns (uint) {
+        
         // Pausing is a very serious situation - we revert to sound the alarms
         require(!borrowGuardianPaused[cToken], "borrow is paused");
-
+        
         if (!markets[cToken].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
-
+       
         if (!markets[cToken].accountMembership[borrower]) {
             // only cTokens may call borrowAllowed if borrower not in market
             require(msg.sender == cToken, "sender must be cToken");
-
+            
             // attempt to add borrower to the market
+            
             Error err = addToMarketInternal(CToken(msg.sender), borrower);
+           
             if (err != Error.NO_ERROR) {
                 return uint(err);
             }
@@ -358,7 +362,7 @@ contract Comptroller is ComptrollerV7Storage, ComptrollerInterface, ComptrollerE
             // it should be impossible to break the important invariant
             assert(markets[cToken].accountMembership[borrower]);
         }
-
+       
         if (oracle.getUnderlyingPrice(CToken(cToken)) == 0) {
             return uint(Error.PRICE_ERROR);
         }

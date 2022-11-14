@@ -103,19 +103,15 @@ describe("compound", function () {
 
         // _setCollateralFactor, 設定 tokenB 的 collateral factor
         await comptroller._setCollateralFactor(
-            tokenB.address,
+            ctokenB.address,
             ethers.utils.parseUnits("0.5", "18")
         )
 
         // _setCloseFactor, set close factor 
         await comptroller._setCloseFactor(ethers.utils.parseUnits("0.5", "18"))
 
-        // _setLiquidationIncentive
-        await comptroller._setLiquidationIncentive(ethers.utils.parseUnits("0.1", "18"))
-
-        // enterMarkets, 為 tokenA tokenB 提供流動性
-        // await comptroller.connect(user1).enterMarkets([ctokenA.address, ctokenB.address])
-        //await comptroller.connect(user2).enterMarkets([ctokenA.address, ctokenB.address])
+        // _setLiquidationIncentive >1
+        await comptroller._setLiquidationIncentive(ethers.utils.parseUnits("1.1", "18"))
 
 
 
@@ -172,8 +168,8 @@ describe("compound", function () {
 
     })
 
-    it("token a enter =market", async function () {
-        // [user1] set token B as collateral
+    it("token a enter market", async function () {
+
         await expect(comptroller.connect(user1).enterMarkets([ctokenA.address]))
             .to.emit(comptroller, "MarketEntered")
             .withArgs(ctokenA.address, user1.address)
@@ -181,24 +177,47 @@ describe("compound", function () {
     })
     it("borrow", async function () {
 
-        // [user1] borrow 50 token A(pUSD) (with all collateral)
+        // [user1] borrow 50 token A() (with all collateral)
         await ctokenA.connect(user1).borrow(ethers.utils.parseUnits("50", 18))
     })
     it("check ctokenA balance ", async function () {
 
-        console.log( " ctokenA.balanceOf(user1.address)",await ctokenA.balanceOf(user1.address))
-
-    expect(await ctokenA.balanceOf(user1.address))
+        expect(await tokenA.balanceOf(user1.address))
             .to.equal(ethers.utils.parseUnits("50", 18))
     })
+
+    // it("延續 (3.) 的借貸場景，調整 token B 的 collateral factor，讓 user1 被 user2 清算", async function(){
+
+
+    //     await comptroller._setCollateralFactor(
+    //         ctokenB.address,
+    //         ethers.utils.parseUnits("0.3", "18")
+    //     )
+
+    //     await ctokenA.connect(user2).liquidateBorrow(user1.address, ethers.utils.parseUnits("5", 18), ctokenB.address)
+    // })
+
+
+
+    it("3. 延續 (3.) 的借貸場景，調整 oracle 中的 token B 的價格，讓 user1 被 user2 清算",async function (){
+        
+        
+        await simplePriceOracle.setUnderlyingPrice(
+            ctokenB.address,
+            ethers.utils.parseUnits("50", "18")
+        )
+
+    })
+    it("owner liquidity should = 0 && short fall should > 0", async () => {
+        let result = await comptroller.getAccountLiquidity(user1.address)
+        expect(result[1]).to.eq(0)
+        expect(result[2]).to.gt(0)
+        console.log("result[0]",result[0])
+        console.log("result[1]",result[1])
+        console.log("result[2]",result[2])
+    })
+
+
+
+
 })
-
-
-
-
-
-
-
-
-
-
