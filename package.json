@@ -19,5 +19,16 @@
     "@openzeppelin/contracts": "^4.7.3",
     "chai": "^4.3.6",
     "dotenv": "^16.0.3"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AliciaChen777/Compound_AppWorks.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AliciaChen777/Compound_AppWorks/issues"
+  },
+  "homepage": "https://github.com/AliciaChen777/Compound_AppWorks#readme"
 }

@@ -80,7 +80,7 @@ describe("compound", function () {
         await simplePriceOracle.deployed();
 
         // setup New price from SimplePriceOracle to Comptroller
-        comptroller._setPriceOracle(simplePriceOracle.address);
+        await comptroller._setPriceOracle(simplePriceOracle.address);
 
         // 設定 oracle 價格
         await simplePriceOracle.setUnderlyingPrice(
@@ -94,8 +94,8 @@ describe("compound", function () {
 
         // setup supportMarket to Comptroller
 
-        comptroller._supportMarket(ctokenA.address);
-        comptroller._supportMarket(ctokenB.address);
+        await comptroller._supportMarket(ctokenA.address);
+        await comptroller._supportMarket(ctokenB.address);
 
 
 
@@ -149,11 +149,6 @@ describe("compound", function () {
 
     it("[user1] use token B as collateral to borrow 50 token A", async function () {
 
-
-        // // [owner] list pUsd in market
-        // await expect(comptroller._supportMarket(ctokenA.address))
-        // .to.emit(comptroller, "Failure")
-        // // .withArgs(ctokenA.address)
 
         // [owner] deposit 10000 token A
         await tokenA.approve(ctokenA.address, ethers.utils.parseUnits("10000", 18))
@@ -216,6 +211,8 @@ describe("compound", function () {
         console.log("result[1]",result[1])
         console.log("result[2]",result[2])
     })
+
+
 
 
 

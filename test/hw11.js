@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const helpers = require("@nomicfoundation/hardhat-network-helpers");
-import 'hardhat/console.sol'
+//import 'hardhat/console.sol'
 
 describe("compound", function(){
     const MINT_AMOUNT = 100n *10n **18n;
